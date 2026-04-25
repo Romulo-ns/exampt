@@ -14,7 +14,8 @@ import {
   LogOut, 
   Menu,
   X,
-  Star
+  Star,
+  FileDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -67,6 +68,7 @@ export default function AppLayout({
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Exercícios", href: "/exercicios", icon: BookOpen },
+    { name: "Gerar PDF", href: "/gerar-pdf", icon: FileDown },
     { name: "Ranking", href: "/ranking", icon: Trophy },
     { name: "Perfil", href: "/perfil", icon: User },
     { name: "Premium", href: "/premium", icon: Star },
