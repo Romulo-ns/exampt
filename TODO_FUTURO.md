@@ -32,3 +32,39 @@ Este documento contém a lista de tarefas e funcionalidades planeadas para o fut
 **Objetivo:** Aumentar a retenção dos alunos.
 - [ ] Criar um sistema de "Missões Diárias" (ex: "Acerta em 5 perguntas de Biologia hoje").
 - [ ] Implementar Notificações (emails ou web push) para avisar os alunos quando perdem a sua *Streak* (dias consecutivos de estudo).
+
+## 🔐 6. Variáveis de Ambiente (Vercel)
+**Objetivo:** Configurar o ambiente de produção.
+- [ ] **Backend:**
+    - [ ] `DATABASE_URL` (Supabase)
+    - [ ] `JWT_SECRET` & `JWT_REFRESH_SECRET`
+    - [ ] `FRONTEND_URL` (https://exampt.vercel.app)
+    - [ ] `STRIPE_SECRET_KEY` & `STRIPE_WEBHOOK_SECRET`
+    - [ ] `STRIPE_PRICE_MONTHLY` & `STRIPE_PRICE_ANNUAL`
+- [ ] **Frontend:**
+    - [ ] `NEXT_PUBLIC_API_URL` (Sugestão: `/_/backend/api`)
+    - [ ] `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+
+## 🚀 7. Configurações de Lançamento (Pós-Deploy)
+**Objetivo:** Garantir a segurança e o fluxo de dados em produção.
+- [ ] **Segurança PDF:** Garantir que o `ExamPdfController` tem o `@UseGuards(PremiumGuard)` ativo.
+- [ ] **Webhook Stripe:** Configurar o URL do webhook na Dashboard do Stripe para `https://exampt.vercel.app/_/backend/api/stripe/webhook`.
+- [ ] **CORS:** Verificar se o `main.ts` do backend aceita o domínio final da Vercel.
+
+## 🧪 8. Plano de Testes (End-to-End)
+**Objetivo:** Validar o funcionamento de todas as peças no site Live.
+- [ ] **Fluxo de Autenticação:**
+    - [ ] Criar nova conta (`/register`).
+    - [ ] Fazer Login e Logout.
+    - [ ] Verificar se o nome e XP aparecem corretamente no Dashboard.
+- [ ] **Fluxo de Estudo:**
+    - [ ] Resolver 3 exercícios e verificar se o XP sobe.
+    - [ ] Verificar se o feedback "Correto/Errado" aparece com a explicação.
+    - [ ] Confirmar se a *Streak* (fogo) atualiza após o primeiro exercício.
+- [ ] **Fluxo Premium (Stripe):**
+    - [ ] Simular compra com cartão de teste (`4242...`).
+    - [ ] Confirmar se o plano muda para `PREMIUM` instantaneamente no perfil.
+    - [ ] Testar a geração de PDF (agora que o plano é Premium).
+- [ ] **UX & Mobile:**
+    - [ ] Verificar se o Dashboard é legível no telemóvel.
+    - [ ] Testar se o menu lateral (Sidebar) fecha e abre corretamente em ecrãs pequenos.
