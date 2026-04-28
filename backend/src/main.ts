@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import '@prisma/adapter-pg';
+import 'pg';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
