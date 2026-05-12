@@ -156,4 +156,43 @@ export class QuestionsService {
       data: { difficultyComputed: computed },
     });
   }
+
+  async create(data: any) {
+    const { options, ...questionData } = data;
+    return this.prisma.question.create({
+      data: {
+        ...questionData,
+        options: {
+          create: options,
+        },
+      },
+      include: { options: true },
+    });
+  }
+
+  async update(id: string, data: any) {
+    const { options, ...questionData } = data;
+    
+    // If options are provided, we replace all existing options (delete and recreate)
+    // for simplicity, or we could update them individually if they have IDs.
+    // For this backoffice, replacing them is usually easier since the number of options is small.
+    if (options) {
+      await this.prisma.option.deleteMany({ where: { questionId: id } });
+    }
+
+    return this.prisma.question.update({
+      where: { id },
+      data: {
+        ...questionData,
+        ...(options ? { options: { create: options } } : {}),
+      },
+      include: { options: true },
+    });
+  }
+
+  async remove(id: string) {
+    return this.prisma.question.delete({
+      where: { id },
+    });
+  }
 }

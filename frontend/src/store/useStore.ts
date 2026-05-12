@@ -6,6 +6,7 @@ type User = {
   email: string;
   nick: string;
   plan: string;
+  role?: string;
   xp: number;
   level: number;
   streak: number;

@@ -19,6 +19,7 @@ model User {
   nick            String    @unique
   passwordHash    String?   @map("password_hash")
   googleId        String?   @unique @map("google_id")
+  role            Role      @default(USER)
   plan            Plan      @default(FREE)
   planExpiresAt   DateTime? @map("plan_expires_at")
   xp              Int       @default(0)
@@ -45,6 +46,13 @@ enum Plan {
   PREMIUM
 
   @@map("plan")
+}
+
+enum Role {
+  USER
+  ADMIN
+
+  @@map("role")
 }
 
 // ─── Conquistas / Badges ────────────────────────────────────

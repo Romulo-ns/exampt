@@ -55,6 +55,7 @@ export class AuthService {
       user.email,
       user.nick,
       user.plan,
+      user.role,
     );
 
     // Save refresh token
@@ -72,6 +73,7 @@ export class AuthService {
         xp: user.xp,
         level: user.level,
         streak: user.streak,
+        role: user.role,
       },
       ...tokens,
     };
@@ -103,6 +105,7 @@ export class AuthService {
       user.email,
       user.nick,
       user.plan,
+      user.role,
     );
 
     await this.prisma.user.update({
@@ -119,6 +122,7 @@ export class AuthService {
         xp: user.xp,
         level: user.level,
         streak: user.streak,
+        role: user.role,
       },
       ...tokens,
     };
@@ -146,6 +150,7 @@ export class AuthService {
       user.email,
       user.nick,
       user.plan,
+      user.role,
     );
 
     await this.prisma.user.update({
@@ -205,6 +210,7 @@ export class AuthService {
       user.email,
       user.nick,
       user.plan,
+      user.role,
     );
 
     await this.prisma.user.update({
@@ -221,6 +227,7 @@ export class AuthService {
         xp: user.xp,
         level: user.level,
         streak: user.streak,
+        role: user.role,
       },
       ...tokens,
     };
@@ -238,8 +245,9 @@ export class AuthService {
     email: string,
     nick: string,
     plan: string,
+    role: string,
   ) {
-    const payload = { sub: userId, email, nick, plan };
+    const payload = { sub: userId, email, nick, plan, role };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {

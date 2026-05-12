@@ -4,11 +4,11 @@ Este documento contém a lista de tarefas e funcionalidades planeadas para o fut
 
 ## 🛠️ 0. Estratégia de Ambientes (Dev & Prod)
 **Objetivo:** Separar completamente o ambiente de desenvolvimento do ambiente de produção para evitar conflitos e instabilidades.
-- [ ] **Ambiente de Produção (Reset):** Apagado (Vercel, Supabase, Render) para recomeçar do zero após estabilizar o Dev.
-- [/] **Ambiente de Developer (Foco Atual):**
-    - [ ] Configurar base de dados local/dev separada.
-    - [ ] Garantir que todas as variáveis de ambiente estão isoladas.
-    - [ ] Testar fluxos críticos localmente antes de qualquer novo deploy.
+- [x] **Ambiente de Produção (Reset):** Apagado (Vercel, Supabase, Render) para recomeçar do zero após estabilizar o Dev.
+- [x] **Ambiente de Developer (Foco Atual):**
+    - [x] Configurar base de dados local/dev separada.
+    - [x] Garantir que todas as variáveis de ambiente estão isoladas.
+    - [x] Testar fluxos críticos localmente antes de qualquer novo deploy.
 
 
 ## 🚀 1. Funcionalidade: Geração de Exames em PDF
@@ -27,7 +27,7 @@ Este documento contém a lista de tarefas e funcionalidades planeadas para o fut
 ## 🌍 3. Deployment (Lançar o Projeto na Internet)
 **Objetivo:** Colocar a aplicação online para os alunos usarem.
 - [x] **Base de Dados:** Criar uma base de dados PostgreSQL alojada na cloud (Supabase configurado).
-- [/] **Backend:** Alojamento da API NestJS no Railway (Preparação concluída).
+- [x] **Backend:** Hosting the NestJS API on Render (Configured with UX fix for cold starts).
 - [/] **Frontend:** Alojamento da plataforma Next.js na Vercel (Preparação concluída).
 - [ ] Comprar um domínio (ex: `exampt.pt`) e configurá-lo na Vercel.
 
@@ -62,10 +62,12 @@ Este documento contém a lista de tarefas e funcionalidades planeadas para o fut
 
 ## 🧪 8. Plano de Testes (End-to-End)
 **Objetivo:** Validar o funcionamento de todas as peças no site Live.
-- [ ] **Fluxo de Autenticação:**
-    - [ ] Criar nova conta (`/register`).
-    - [ ] Fazer Login e Logout.
-    - [ ] Verificar se o nome e XP aparecem corretamente no Dashboard.
+- [ ] **Authentication Flow:**
+    - [x] Translate authentication pages and hooks to English.
+    - [ ] Create new account (`/register`).
+    - [ ] Login and Logout.
+    - [x] Implement Render "wake-up" state for Google Login.
+    - [ ] Verify name and XP appear correctly in the Dashboard.
 - [ ] **Fluxo de Estudo:**
     - [ ] Resolver 3 exercícios e verificar se o XP sobe.
     - [ ] Verificar se o feedback "Correto/Errado" aparece com a explicação.
@@ -77,3 +79,7 @@ Este documento contém a lista de tarefas e funcionalidades planeadas para o fut
 - [ ] **UX & Mobile:**
     - [ ] Verificar se o Dashboard é legível no telemóvel.
     - [ ] Testar se o menu lateral (Sidebar) fecha e abre corretamente em ecrãs pequenos.
+    
+## 🛠️ 9. Code Standards & Quality
+- [x] **Language:** Use English for all code comments, logs, and authentication UI strings.
+- [ ] **Performance:** Monitor Render cold start impact and evaluate paid plan if traffic increases.

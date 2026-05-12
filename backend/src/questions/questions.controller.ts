@@ -8,7 +8,10 @@ import {
 } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { CreateQuestionDto, UpdateQuestionDto } from './dto/question.dto';
+import { Body, Post, Put, Delete } from '@nestjs/common';
 @Controller('questions')
 export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
@@ -41,5 +44,29 @@ export class QuestionsController {
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string) {
     return this.questionsService.findById(id);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async create(@Body() createQuestionDto: CreateQuestionDto) {
+    return this.questionsService.create(createQuestionDto);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async update(
+    @Param('id') id: string,
+    @Body() updateQuestionDto: UpdateQuestionDto,
+  ) {
+    return this.questionsService.update(id, updateQuestionDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async remove(@Param('id') id: string) {
+    return this.questionsService.remove(id);
   }
 }
