@@ -19,7 +19,7 @@ export default function UsersAdminPage() {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin?limit=20&page=${page}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
       if (res.ok) {

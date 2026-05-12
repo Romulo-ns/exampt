@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, ShieldAlert, KeyRound, Loader2 } from "lucide-react";
 
-export default function EditUserPage({ params }: { params: { id: string } }) {
+export default function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = React.use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,11 +35,11 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
       // or we can just fetch the user if the backend supports it.
       // Wait, we need a way to get one user. Let's just fetch all and find it for this demo.
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin?limit=100`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
       });
       if (res.ok) {
         const data = await res.json();
-        const foundUser = data.users.find((u: any) => u.id === params.id);
+        const foundUser = data.users.find((u: any) => u.id === unwrappedParams.id);
         if (foundUser) {
           setUser(foundUser);
           setNick(foundUser.nick);
@@ -58,11 +59,11 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin/${params.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin/${unwrappedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify({
           nick,
@@ -97,11 +98,11 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
 
     try {
       setResettingPassword(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin/${params.id}/reset-password`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin/${unwrappedParams.id}/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify({ password: newPassword }),
       });

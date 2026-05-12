@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 
-export default function EditQuestionPage({ params }: { params: { id: string } }) {
+export default function EditQuestionPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = React.use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,8 +40,8 @@ export default function EditQuestionPage({ params }: { params: { id: string } })
       }
 
       // Fetch question
-      const qRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${params.id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      const qRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${unwrappedParams.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (qRes.ok) {
         const qData = await qRes.json();
@@ -95,11 +96,11 @@ export default function EditQuestionPage({ params }: { params: { id: string } })
 
     try {
       setSaving(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${params.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${unwrappedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify({
           subjectId,

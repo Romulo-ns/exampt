@@ -21,7 +21,7 @@ export default function QuestionsAdminPage() {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions?limit=20&offset=${(page - 1) * 20}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
       if (res.ok) {
@@ -43,7 +43,7 @@ export default function QuestionsAdminPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
       if (res.ok) {

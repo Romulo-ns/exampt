@@ -76,7 +76,10 @@ export default function PremiumPage() {
 
   if (isPremium) {
     const isCanceled = subscription?.status === 'canceled_at_period_end' || subscription?.status === 'canceled';
-    const periodEnd = subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('pt-PT') : 'Desconhecida';
+    
+    // Check Stripe subscription date or manual plan date
+    const rawDate = subscription?.currentPeriodEnd || profile?.planExpiresAt || user?.planExpiresAt;
+    const periodEnd = rawDate ? new Date(rawDate).toLocaleDateString('pt-PT') : 'Vitalícia';
 
     return (
       <div className="max-w-4xl mx-auto py-12 text-center space-y-6">
