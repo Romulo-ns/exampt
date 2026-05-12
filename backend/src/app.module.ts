@@ -11,6 +11,7 @@ import { RankingModule } from './ranking/ranking.module';
 import { StatsModule } from './stats/stats.module';
 import { StripeModule } from './stripe/stripe.module';
 import { ExamPdfModule } from './exam-pdf/exam-pdf.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -32,5 +33,6 @@ import { ExamPdfModule } from './exam-pdf/exam-pdf.module';
     StripeModule,
     ExamPdfModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
