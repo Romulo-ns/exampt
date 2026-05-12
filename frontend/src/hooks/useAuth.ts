@@ -5,18 +5,18 @@ import api from '@/lib/api';
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'A password deve ter no mínimo 6 caracteres'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export const registerSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.string().email('Invalid email'),
   nick: z
     .string()
-    .min(3, 'O nick deve ter no mínimo 3 caracteres')
-    .max(20, 'O nick deve ter no máximo 20 caracteres')
-    .regex(/^[a-zA-Z0-9_]+$/, 'O nick só pode conter letras, números e underscore'),
-  password: z.string().min(6, 'A password deve ter no mínimo 6 caracteres'),
+    .min(3, 'Nickname must be at least 3 characters')
+    .max(20, 'Nickname must be at most 20 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Nickname can only contain letters, numbers and underscores'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export type LoginData = z.infer<typeof loginSchema>;
@@ -41,7 +41,7 @@ export function useAuth() {
       setUser(user);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Ocorreu um erro ao fazer login');
+      setError(err.response?.data?.message || 'An error occurred during login');
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +60,7 @@ export function useAuth() {
       setUser(user);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Ocorreu um erro ao fazer registo');
+      setError(err.response?.data?.message || 'An error occurred during registration');
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +84,7 @@ export function useAuth() {
       const response = await api.get(`/users/check-nick?nick=${encodeURIComponent(nick)}`);
       return response.data.available ? 'available' : 'taken';
     } catch (err) {
-      console.error('Erro ao verificar nick:', err);
+      console.error('Error checking nickname availability:', err);
       return 'error';
     }
   };
