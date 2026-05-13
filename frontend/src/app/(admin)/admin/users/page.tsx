@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Edit, Loader2, ShieldAlert, BadgeCheck, Search, X, Filter } from "lucide-react";
+import FilterSelector from "@/components/ui/FilterSelector";
 
 export default function UsersAdminPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -13,6 +14,18 @@ export default function UsersAdminPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [role, setRole] = useState("");
   const [plan, setPlan] = useState("");
+
+  const roleOptions = [
+    { value: "", label: "All Roles" },
+    { value: "USER", label: "USER" },
+    { value: "ADMIN", label: "ADMIN", icon: <ShieldAlert className="h-3 w-3 text-red-400" /> },
+  ];
+
+  const planOptions = [
+    { value: "", label: "All Plans" },
+    { value: "FREE", label: "FREE" },
+    { value: "PREMIUM", label: "PREMIUM", icon: <BadgeCheck className="h-3 w-3 text-primary" /> },
+  ];
 
   // Handle search debouncing
   useEffect(() => {
@@ -91,32 +104,22 @@ export default function UsersAdminPage() {
           </div>
 
           {/* Role Filter */}
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
-            <Filter className="h-3 w-3 text-muted-foreground" />
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="bg-transparent text-xs text-white focus:outline-none cursor-pointer"
-            >
-              <option value="" className="bg-zinc-900">All Roles</option>
-              <option value="USER" className="bg-zinc-900">USER</option>
-              <option value="ADMIN" className="bg-zinc-900">ADMIN</option>
-            </select>
-          </div>
+          <FilterSelector
+            options={roleOptions}
+            selectedValue={role}
+            onSelect={setRole}
+            placeholder="Role"
+            icon={<Filter className="h-3 w-3" />}
+          />
 
           {/* Plan Filter */}
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
-            <BadgeCheck className="h-3 w-3 text-muted-foreground" />
-            <select
-              value={plan}
-              onChange={(e) => setPlan(e.target.value)}
-              className="bg-transparent text-xs text-white focus:outline-none cursor-pointer"
-            >
-              <option value="" className="bg-zinc-900">All Plans</option>
-              <option value="FREE" className="bg-zinc-900">FREE</option>
-              <option value="PREMIUM" className="bg-zinc-900">PREMIUM</option>
-            </select>
-          </div>
+          <FilterSelector
+            options={planOptions}
+            selectedValue={plan}
+            onSelect={setPlan}
+            placeholder="Plan"
+            icon={<BadgeCheck className="h-3 w-3" />}
+          />
 
           {(role || plan || search) && (
             <button 
