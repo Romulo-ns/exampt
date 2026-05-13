@@ -32,3 +32,4 @@ coverage/
 
 # Executables
 *.exe
+*.tsbuildinfo

@@ -52,8 +52,11 @@ export class UsersController {
   async findAllAdmin(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
+    @Query('search') search?: string,
+    @Query('role') role?: string,
+    @Query('plan') plan?: string,
   ) {
-    return this.usersService.findAllAdmin(parseInt(page), parseInt(limit));
+    return this.usersService.findAllAdmin(parseInt(page), parseInt(limit), search, role, plan);
   }
 
   @Put('admin/:id')

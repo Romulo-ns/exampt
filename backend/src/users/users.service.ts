@@ -127,10 +127,29 @@ export class UsersService {
     return { radarData };
   }
 
-  async findAllAdmin(page: number = 1, limit: number = 20) {
+  async findAllAdmin(page: number = 1, limit: number = 20, search?: string, role?: string, plan?: string) {
     const offset = (page - 1) * limit;
+    
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { email: { contains: search, mode: 'insensitive' as const } },
+        { nick: { contains: search, mode: 'insensitive' as const } },
+      ];
+    }
+
+    if (role) {
+      where.role = role;
+    }
+
+    if (plan) {
+      where.plan = plan;
+    }
+
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
+        where,
         skip: offset,
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -146,7 +165,7 @@ export class UsersService {
           createdAt: true,
         },
       }),
-      this.prisma.user.count(),
+      this.prisma.user.count({ where }),
     ]);
 
     return { users, total, page, limit };
