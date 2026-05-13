@@ -2,22 +2,47 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Edit, Loader2, ShieldAlert, BadgeCheck } from "lucide-react";
+import { Edit, Loader2, ShieldAlert, BadgeCheck, Search, X, Filter } from "lucide-react";
 
 export default function UsersAdminPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [role, setRole] = useState("");
+  const [plan, setPlan] = useState("");
+
+  // Handle search debouncing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset to first page on search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Handle filter changes
+  useEffect(() => {
+    setPage(1); // Reset to first page on filter change
+  }, [role, plan]);
 
   useEffect(() => {
     fetchUsers();
-  }, [page]);
+  }, [page, debouncedSearch, role, plan]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin?limit=20&page=${page}`, {
+      const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/users/admin`);
+      url.searchParams.append('limit', '20');
+      url.searchParams.append('page', page.toString());
+      if (debouncedSearch) url.searchParams.append('search', debouncedSearch);
+      if (role) url.searchParams.append('role', role);
+      if (plan) url.searchParams.append('plan', plan);
+
+      const res = await fetch(url.toString(), {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
@@ -36,9 +61,76 @@ export default function UsersAdminPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Users Management</h1>
-        <p className="text-muted-foreground text-sm mt-1">Manage platform users, roles, and subscriptions</p>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold">Users Management</h1>
+          <p className="text-muted-foreground text-sm mt-1">Manage platform users, roles, and subscriptions</p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search */}
+          <div className="relative w-full md:w-64 lg:w-80">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-muted-foreground">
+              <Search className="h-4 w-4" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search by nick or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-primary transition-colors"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-white transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Role Filter */}
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            <Filter className="h-3 w-3 text-muted-foreground" />
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="bg-transparent text-xs text-white focus:outline-none cursor-pointer"
+            >
+              <option value="" className="bg-zinc-900">All Roles</option>
+              <option value="USER" className="bg-zinc-900">USER</option>
+              <option value="ADMIN" className="bg-zinc-900">ADMIN</option>
+            </select>
+          </div>
+
+          {/* Plan Filter */}
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            <BadgeCheck className="h-3 w-3 text-muted-foreground" />
+            <select
+              value={plan}
+              onChange={(e) => setPlan(e.target.value)}
+              className="bg-transparent text-xs text-white focus:outline-none cursor-pointer"
+            >
+              <option value="" className="bg-zinc-900">All Plans</option>
+              <option value="FREE" className="bg-zinc-900">FREE</option>
+              <option value="PREMIUM" className="bg-zinc-900">PREMIUM</option>
+            </select>
+          </div>
+
+          {(role || plan || search) && (
+            <button 
+              onClick={() => {
+                setRole("");
+                setPlan("");
+                setSearch("");
+              }}
+              className="text-xs text-muted-foreground hover:text-white transition-colors underline underline-offset-4"
+            >
+              Reset Filters
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
