@@ -13,6 +13,8 @@ export class UsersService {
         email: true,
         nick: true,
         plan: true,
+        role: true,
+        planExpiresAt: true,
         xp: true,
         level: true,
         streak: true,
@@ -70,6 +72,8 @@ export class UsersService {
         email: true,
         nick: true,
         plan: true,
+        role: true,
+        planExpiresAt: true,
         xp: true,
         level: true,
         streak: true,
@@ -121,5 +125,60 @@ export class UsersService {
     }));
 
     return { radarData };
+  }
+
+  async findAllAdmin(page: number = 1, limit: number = 20) {
+    const offset = (page - 1) * limit;
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        skip: offset,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          email: true,
+          nick: true,
+          role: true,
+          plan: true,
+          planExpiresAt: true,
+          xp: true,
+          level: true,
+          createdAt: true,
+        },
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    return { users, total, page, limit };
+  }
+
+  async updateAdmin(userId: string, data: any) {
+    if (data.nick) {
+      const isAvailable = await this.checkNickAvailable(data.nick, userId);
+      if (!isAvailable) {
+        throw new ConflictException('Este nick já está em uso');
+      }
+    }
+
+    if (data.email) {
+      const existingEmail = await this.prisma.user.findFirst({
+        where: { email: data.email, id: { not: userId } },
+      });
+      if (existingEmail) {
+        throw new ConflictException('Este email já está em uso por outra conta');
+      }
+    }
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+  }
+
+  async resetPasswordAdmin(userId: string, newPasswordHash: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newPasswordHash },
+    });
   }
 }

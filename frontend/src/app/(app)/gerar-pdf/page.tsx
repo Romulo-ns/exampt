@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import SubjectSelector from "@/components/ui/SubjectSelector";
 
 export default function GerarPdfPage() {
   const { user } = useStore();
@@ -119,19 +120,12 @@ export default function GerarPdfPage() {
             <label className="text-sm font-medium text-foreground">
               Disciplina
             </label>
-            <select
-              className="w-full h-12 rounded-xl border border-input bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-              value={selectedSubject}
-              onChange={(e) => setSelectedSubject(e.target.value)}
+            <SubjectSelector 
+              subjects={subjects || []}
+              selectedId={selectedSubject}
+              onSelect={(id) => setSelectedSubject(id)}
               disabled={isGenerating}
-            >
-              <option value="">Seleciona uma disciplina...</option>
-              {subjects?.map((sub: any) => (
-                <option key={sub.id} value={sub.id}>
-                  {sub.name} ({sub.questionCount} questões)
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           {/* Question Count */}

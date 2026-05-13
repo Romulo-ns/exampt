@@ -1,4 +1,4 @@
-import { PrismaClient } from '../src/prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
@@ -41,6 +41,56 @@ async function main() {
     where: { slug: 'bio-geo' },
     update: {},
     create: { name: 'Biologia e Geologia', slug: 'bio-geo', examCode: 'BG' },
+  });
+  const fqa = await prisma.subject.upsert({
+    where: { slug: 'fq-a' },
+    update: {},
+    create: { name: 'Física e Química A', slug: 'fq-a', examCode: 'FQA' },
+  });
+  const fil = await prisma.subject.upsert({
+    where: { slug: 'fil' },
+    update: {},
+    create: { name: 'Filosofia', slug: 'fil', examCode: 'FIL' },
+  });
+  const geoA = await prisma.subject.upsert({
+    where: { slug: 'geo-a' },
+    update: {},
+    create: { name: 'Geografia A', slug: 'geo-a', examCode: 'GEO-A' },
+  });
+  const hisA = await prisma.subject.upsert({
+    where: { slug: 'his-a' },
+    update: {},
+    create: { name: 'História A', slug: 'his-a', examCode: 'HIS-A' },
+  });
+  const ecoA = await prisma.subject.upsert({
+    where: { slug: 'eco-a' },
+    update: {},
+    create: { name: 'Economia A', slug: 'eco-a', examCode: 'ECO-A' },
+  });
+  const ing = await prisma.subject.upsert({
+    where: { slug: 'ing' },
+    update: {},
+    create: { name: 'Inglês', slug: 'ing', examCode: 'ING' },
+  });
+  const gdA = await prisma.subject.upsert({
+    where: { slug: 'gd-a' },
+    update: {},
+    create: { name: 'Geometria Descritiva A', slug: 'gd-a', examCode: 'GD-A' },
+  });
+  const matB = await prisma.subject.upsert({
+    where: { slug: 'mat-b' },
+    update: {},
+    create: { name: 'Matemática B', slug: 'mat-b', examCode: 'MAT-B' },
+  });
+  const macs = await prisma.subject.upsert({
+    where: { slug: 'macs' },
+    update: {},
+    create: { name: 'Matemática Aplicada às Ciências Sociais', slug: 'macs', examCode: 'MACS' },
+  });
+  const desA = await prisma.subject.upsert({
+    where: { slug: 'des-a' },
+    update: {},
+    create: { name: 'Desenho A', slug: 'des-a', examCode: 'DES-A' },
   });
 
   console.log('✅ Subjects created');

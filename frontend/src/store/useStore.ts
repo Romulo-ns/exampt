@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type User = {
+export type User = {
   id: string;
   email: string;
   nick: string;
   plan: string;
+  role?: string;
+  planExpiresAt?: string;
   xp: number;
   level: number;
   streak: number;

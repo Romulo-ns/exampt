@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useStore } from "@/store/useStore";
+import { useStore, User } from "@/store/useStore";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ export default function PremiumPage() {
   const [isAnnual, setIsAnnual] = useState(true);
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [isFetchingProfile, setIsFetchingProfile] = useState(true);
   const [isCanceling, setIsCanceling] = useState(false);
 
@@ -76,7 +76,10 @@ export default function PremiumPage() {
 
   if (isPremium) {
     const isCanceled = subscription?.status === 'canceled_at_period_end' || subscription?.status === 'canceled';
-    const periodEnd = subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('pt-PT') : 'Desconhecida';
+    
+    // Check Stripe subscription date or manual plan date
+    const rawDate = subscription?.currentPeriodEnd || profile?.planExpiresAt || user?.planExpiresAt;
+    const periodEnd = rawDate ? new Date(rawDate).toLocaleDateString('pt-PT') : 'Vitalícia';
 
     return (
       <div className="max-w-4xl mx-auto py-12 text-center space-y-6">

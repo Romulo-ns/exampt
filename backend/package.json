@@ -23,6 +23,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
     "stripe:listen": ".\\stripe.exe listen --forward-to http://localhost:3001/api/stripe/webhook",
+    "add-subjects": "ts-node add-national-subjects.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

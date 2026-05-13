@@ -1,0 +1,268 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import SubjectSelector from "@/components/ui/SubjectSelector";
+
+export default function EditQuestionPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = React.use(params);
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [subjects, setSubjects] = useState<any[]>([]);
+
+  // Form State
+  const [subjectId, setSubjectId] = useState("");
+  const [text, setText] = useState("");
+  const [difficulty, setDifficulty] = useState(3);
+  const [year, setYear] = useState("");
+  const [hint, setHint] = useState("");
+  const [explanation, setExplanation] = useState("");
+  const [options, setOptions] = useState([
+    { label: "A", text: "", isCorrect: true, position: 1 },
+    { label: "B", text: "", isCorrect: false, position: 2 },
+    { label: "C", text: "", isCorrect: false, position: 3 },
+    { label: "D", text: "", isCorrect: false, position: 4 },
+  ]);
+
+  useEffect(() => {
+    fetchSubjectsAndQuestion();
+  }, []);
+
+  const fetchSubjectsAndQuestion = async () => {
+    try {
+      // Fetch subjects
+      const subRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subjects`);
+      if (subRes.ok) {
+        const subData = await subRes.json();
+        setSubjects(subData);
+      }
+
+      // Fetch question
+      const qRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${unwrappedParams.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (qRes.ok) {
+        const qData = await qRes.json();
+        setSubjectId(qData.subjectId);
+        setText(qData.text);
+        setDifficulty(qData.difficulty);
+        setYear(qData.year?.toString() || "");
+        setHint(qData.hint || "");
+        setExplanation(qData.explanation || "");
+        
+        // Ensure we always have 4 options, map existing ones
+        if (qData.options && qData.options.length > 0) {
+          const mappedOptions = [
+            { label: "A", text: "", isCorrect: false, position: 1 },
+            { label: "B", text: "", isCorrect: false, position: 2 },
+            { label: "C", text: "", isCorrect: false, position: 3 },
+            { label: "D", text: "", isCorrect: false, position: 4 },
+          ];
+          qData.options.forEach((opt: any) => {
+            const index = mappedOptions.findIndex(m => m.label === opt.label);
+            if (index !== -1) {
+              mappedOptions[index].text = opt.text;
+              mappedOptions[index].isCorrect = opt.isCorrect;
+            }
+          });
+          setOptions(mappedOptions);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOptionChange = (index: number, field: string, value: any) => {
+    const newOptions = [...options];
+    if (field === 'isCorrect') {
+      newOptions.forEach(o => o.isCorrect = false);
+      newOptions[index].isCorrect = value;
+    } else {
+      (newOptions[index] as any)[field] = value;
+    }
+    setOptions(newOptions);
+  };
+
+  const handleSave = async () => {
+    if (!text || !subjectId || options.some(o => !o.text)) {
+      alert("Please fill in all required fields (Text, Subject, and all Option texts)");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questions/${unwrappedParams.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({
+          subjectId,
+          text,
+          difficulty,
+          year: year ? parseInt(year) : null,
+          hint,
+          explanation,
+          type: "MCQ",
+          options: options.map(o => ({
+            label: o.label,
+            text: o.text,
+            isCorrect: o.isCorrect,
+            position: o.position
+          }))
+        }),
+      });
+
+      if (res.ok) {
+        alert("Question updated successfully");
+        router.push("/admin/questions");
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to update question");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center p-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="flex items-center gap-4">
+        <Link href="/admin/questions" className="p-2 hover:bg-white/5 rounded-full transition-colors">
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold">Edit Question</h1>
+          <p className="text-muted-foreground text-sm">Update question details and options</p>
+        </div>
+      </div>
+
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-8">
+        
+        {/* Basic Info */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold border-b border-white/10 pb-2">Basic Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/70">Disciplina *</label>
+              <SubjectSelector 
+                subjects={subjects}
+                selectedId={subjectId}
+                onSelect={(id) => setSubjectId(id)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Difficulty (1-5)</label>
+              <input 
+                type="number" min="1" max="5"
+                value={difficulty}
+                onChange={(e) => setDifficulty(parseInt(e.target.value))}
+                className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Year (Optional)</label>
+              <input 
+                type="number" 
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Question Text & Hint */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Question Text *</label>
+            <textarea 
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={4}
+              className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary resize-y"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Hint (Optional)</label>
+            <input 
+              type="text" 
+              value={hint}
+              onChange={(e) => setHint(e.target.value)}
+              className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Explanation (Shown after answering)</label>
+            <textarea 
+              value={explanation}
+              onChange={(e) => setExplanation(e.target.value)}
+              rows={2}
+              className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary resize-y"
+            />
+          </div>
+        </div>
+
+        {/* Options */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold border-b border-white/10 pb-2">Options</h2>
+          <div className="space-y-3">
+            {options.map((opt, idx) => (
+              <div key={idx} className={`flex items-start gap-4 p-4 rounded-lg border ${opt.isCorrect ? 'border-primary bg-primary/5' : 'border-white/10 bg-black/50'}`}>
+                <div className="pt-2">
+                  <input 
+                    type="radio" 
+                    name="correctOption" 
+                    checked={opt.isCorrect}
+                    onChange={() => handleOptionChange(idx, 'isCorrect', true)}
+                    className="w-4 h-4 accent-primary"
+                  />
+                </div>
+                <div className="w-12 pt-1 font-bold text-lg text-center text-muted-foreground">{opt.label}</div>
+                <div className="flex-1">
+                  <textarea 
+                    value={opt.text}
+                    onChange={(e) => handleOptionChange(idx, 'text', e.target.value)}
+                    placeholder={`Option ${opt.label} text...`}
+                    rows={2}
+                    className="w-full bg-transparent border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary resize-y"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-white/10 flex justify-end">
+          <button 
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            Save Changes
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}

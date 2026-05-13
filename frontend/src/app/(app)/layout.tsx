@@ -15,7 +15,8 @@ import {
   Menu,
   X,
   Star,
-  FileDown
+  FileDown,
+  ShieldAlert
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -73,6 +74,12 @@ export default function AppLayout({
     { name: "Perfil", href: "/perfil", icon: User },
     { name: "Premium", href: "/premium", icon: Star },
   ];
+
+  console.log("Current user object:", user);
+
+  if (user?.role === 'ADMIN') {
+    navItems.push({ name: "Admin Panel", href: "/admin/questions", icon: ShieldAlert });
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
