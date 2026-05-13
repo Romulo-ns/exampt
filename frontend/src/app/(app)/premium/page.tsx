@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useStore } from "@/store/useStore";
+import { useStore, User } from "@/store/useStore";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ export default function PremiumPage() {
   const [isAnnual, setIsAnnual] = useState(true);
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [isFetchingProfile, setIsFetchingProfile] = useState(true);
   const [isCanceling, setIsCanceling] = useState(false);
 
