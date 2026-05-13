@@ -12,6 +12,17 @@
 | Cache | Redis (Upstash) |
 | Deploy | Vercel + Supabase |
 
+## Funcionalidades Principais
+
+- **Questões Reais**: Base de dados de questões de exames nacionais (Matemática, Português, Bio-Geo).
+- **Simulação de Exame**: Gera PDFs personalizados para estudo offline.
+- **Backoffice Administrativo**:
+  - Gestão de utilizadores com **pesquisa avançada** (nick/email).
+  - **Filtros inteligentes** por Role (Admin/User) e Plano (Free/Premium).
+  - Gestão de questões e disciplinas.
+- **Gamificação**: Sistema de XP, níveis e streaks.
+- **Premium**: Integração com Stripe para subscrições mensais/anuais.
+
 ## Setup Local
 
 ### Pré-requisitos
@@ -26,9 +37,15 @@ cd backend
 npm install
 cp .env.example .env  # configurar variáveis (incluindo Stripe)
 npx prisma migrate dev
-npx prisma db seed
+npx prisma migrate dev
+npm run prisma:seed  # Popula questões e utilizadores de teste
 npm run start:dev
 ```
+
+#### Utilizadores de Teste (Pós-Seed)
+- **Aluno**: `aluno@exampt.pt` / `teste123` (Plano FREE)
+- **Premium**: `premium@exampt.pt` / `teste123` (Plano PREMIUM)
+
 
 #### Stripe (Desenvolvimento Local)
 Para testar os pagamentos e webhooks localmente, é necessário o Stripe CLI:
