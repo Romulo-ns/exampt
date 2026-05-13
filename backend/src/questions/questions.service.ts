@@ -9,15 +9,19 @@ export class QuestionsService {
     subjectId?: string;
     difficulty?: number;
     year?: number;
+    search?: string;
     limit?: number;
     offset?: number;
   }) {
-    const { subjectId, difficulty, year, limit = 20, offset = 0 } = filters;
+    const { subjectId, difficulty, year, search, limit = 20, offset = 0 } = filters;
 
     const where: any = { isActive: true };
     if (subjectId) where.subjectId = subjectId;
     if (difficulty) where.difficulty = difficulty;
     if (year) where.year = year;
+    if (search) {
+      where.text = { contains: search, mode: 'insensitive' };
+    }
 
     const [questions, total] = await Promise.all([
       this.prisma.question.findMany({
