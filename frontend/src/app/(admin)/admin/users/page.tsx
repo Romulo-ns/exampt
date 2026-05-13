@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Edit, Loader2, ShieldAlert, BadgeCheck, Search, X, Filter } from "lucide-react";
+import { Edit, Loader2, ShieldAlert, BadgeCheck, Search, X, Filter, UserPlus } from "lucide-react";
 import FilterSelector from "@/components/ui/FilterSelector";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function UsersAdminPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -11,7 +12,7 @@ export default function UsersAdminPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const [role, setRole] = useState("");
   const [plan, setPlan] = useState("");
 
@@ -27,19 +28,10 @@ export default function UsersAdminPage() {
     { value: "PREMIUM", label: "PREMIUM", icon: <BadgeCheck className="h-3 w-3 text-primary" /> },
   ];
 
-  // Handle search debouncing
+  // Reset to first page on search or filter change
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1); // Reset to first page on search
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search]);
-
-  // Handle filter changes
-  useEffect(() => {
-    setPage(1); // Reset to first page on filter change
-  }, [role, plan]);
+    setPage(1);
+  }, [debouncedSearch, role, plan]);
 
   useEffect(() => {
     fetchUsers();
@@ -74,13 +66,15 @@ export default function UsersAdminPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-        <div className="flex-1">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
           <h1 className="text-2xl font-bold">Users Management</h1>
           <p className="text-muted-foreground text-sm mt-1">Manage platform users, roles, and subscriptions</p>
         </div>
+      </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-4 rounded-xl border border-white/10">
+        <div className="flex flex-wrap items-center gap-3 flex-1">
           {/* Search */}
           <div className="relative w-full md:w-64 lg:w-80">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-muted-foreground">

@@ -22,6 +22,7 @@ export class QuestionsController {
     @Query('subjectId') subjectId?: string,
     @Query('difficulty') difficulty?: string,
     @Query('year') year?: string,
+    @Query('search') search?: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ) {
@@ -29,6 +30,7 @@ export class QuestionsController {
       subjectId,
       difficulty: difficulty ? parseInt(difficulty) : undefined,
       year: year ? parseInt(year) : undefined,
+      search,
       limit: limit ? parseInt(limit) : 20,
       offset: offset ? parseInt(offset) : 0,
     });
