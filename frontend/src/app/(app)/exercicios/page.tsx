@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Loader2, CheckCircle2, XCircle, Lightbulb, Zap, ArrowRight, Lock, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import SubjectSelector from "@/components/ui/SubjectSelector";
 
 export default function ExerciciosPage() {
   const { user, setUser } = useStore();
@@ -133,18 +134,14 @@ export default function ExerciciosPage() {
           )}
         </div>
         
-        <div className="w-full md:w-auto">
-          <select 
-            className="w-full md:w-64 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
-            disabled={!!result} // Don't allow changing subject mid-question review
-          >
-            <option value="">Todas as Disciplinas</option>
-            {subjects?.map((sub: any) => (
-              <option key={sub.id} value={sub.id}>{sub.name}</option>
-            ))}
-          </select>
+        <div className="w-full md:w-auto min-w-[250px]">
+          <SubjectSelector 
+            subjects={subjects || []}
+            selectedId={selectedSubject}
+            onSelect={(id) => setSelectedSubject(id)}
+            placeholder="Todas as Disciplinas"
+            disabled={!!result}
+          />
         </div>
       </div>
 

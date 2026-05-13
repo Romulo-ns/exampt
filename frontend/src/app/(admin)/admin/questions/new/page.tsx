@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, Plus, Trash2, Loader2 } from "lucide-react";
+import SubjectSelector from "@/components/ui/SubjectSelector";
 
 export default function NewQuestionPage() {
   const router = useRouter();
@@ -116,17 +117,12 @@ export default function NewQuestionPage() {
           <h2 className="text-lg font-semibold border-b border-white/10 pb-2">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Subject *</label>
-              <select 
-                value={subjectId}
-                onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full bg-black/50 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:border-primary"
-              >
-                <option value="" disabled>Select a subject</option>
-                {subjects.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
+              <label className="text-sm font-medium text-white/70">Disciplina *</label>
+              <SubjectSelector 
+                subjects={subjects}
+                selectedId={subjectId}
+                onSelect={(id) => setSubjectId(id)}
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Difficulty (1-5)</label>
